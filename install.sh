@@ -1,14 +1,5 @@
 #!/bin/bash
 
-#====================================================
-#	System Request:Debian 7+/Ubuntu 14.04+/Centos 6+
-#	Author:	wulabing
-#	Dscription: V2ray ws+tls onekey
-#	Version: 3.3.1
-#	Blog: https://www.wulabing.com
-#	Official document: www.v2ray.com
-#====================================================
-
 #fonts color
 Green="\033[32m"
 Red="\033[31m"
