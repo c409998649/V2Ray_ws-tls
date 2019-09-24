@@ -153,8 +153,8 @@ modify_nginx(){
         cp /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
     fi
     sed -i "1,/listen/{s/listen 443 ssl;/listen ${port} ssl;/}" ${nginx_conf}
-    sed -i "/ssl_certificate/c \\\tssl_certificate ${crt};" ${nginx_conf}
-    sed -i "/ssl_certificate_key/c \\\tssl_certificate_key ${crtKey};" ${nginx_conf}
+    sed -i "/ssl_certificate /c \\\tssl_certificate ${crt};" ${nginx_conf}
+    sed -i "/ssl_certificate_key /c \\\tssl_certificate_key ${crtKey};" ${nginx_conf}
     sed -i "/server_name/c \\\tserver_name ${domain};" ${nginx_conf}
     sed -i "/location/c \\\tlocation \/${camouflage}\/" ${nginx_conf}
     sed -i "/proxy_pass/c \\\tproxy_pass http://127.0.0.1:${PORT};" ${nginx_conf}
