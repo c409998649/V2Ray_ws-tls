@@ -153,6 +153,8 @@ modify_nginx(){
         cp /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
     fi
     sed -i "1,/listen/{s/listen 443 ssl;/listen ${port} ssl;/}" ${nginx_conf}
+    sed -i "/ssl_certificate/c \\\tssl_certificate ${crt};" ${nginx_conf}
+    sed -i "/ssl_certificate/c \\\tssl_certificate ${crtKey};" ${nginx_conf}
     sed -i "/server_name/c \\\tserver_name ${domain};" ${nginx_conf}
     sed -i "/location/c \\\tlocation \/${camouflage}\/" ${nginx_conf}
     sed -i "/proxy_pass/c \\\tproxy_pass http://127.0.0.1:${PORT};" ${nginx_conf}
@@ -250,8 +252,8 @@ nginx_conf_add(){
     server {
         listen 443 ssl;
         ssl on;
-        ssl_certificate       ${crt};
-        ssl_certificate_key   ${crtKey};
+        ssl_certificate       /home/cert/v2ray.pem;
+        ssl_certificate_key   /home/cert/v2ray.key;
         ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
         ssl_ciphers           HIGH:!aNULL:!MD5;
         server_name           serveraddr.com;
@@ -320,6 +322,8 @@ main(){
     time_modify
     dependency_install
     domain_check
+    #自定义证书
+    certificate
     port_alterid_set
     v2ray_install
     port_exist_check 80
@@ -328,9 +332,6 @@ main(){
     v2ray_conf_add
     nginx_conf_add
     web_camouflage
-
-    #自定义证书
-    certificate
 
     #改变证书安装位置，防止端口冲突关闭相关应用
     systemctl stop nginx
