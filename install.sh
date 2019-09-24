@@ -250,8 +250,8 @@ nginx_conf_add(){
     server {
         listen 443 ssl;
         ssl on;
-        ssl_certificate       /home/cert/v2ray.crt;
-        ssl_certificate_key   /home/cert/v2ray.key;
+        ssl_certificate       ${crt};
+        ssl_certificate_key   ${crtKey};
         ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
         ssl_ciphers           HIGH:!aNULL:!MD5;
         server_name           serveraddr.com;
@@ -278,6 +278,11 @@ EOF
 modify_nginx
 judge "Nginx 配置修改"
 
+}
+
+certificate(){
+  stty erase '^H' && read -p "请输入你的证书crt路径:" crt
+  stty erase '^H' && read -p "请输入你的证书key路径:" crtKey
 }
 
 start_process_systemd(){
@@ -307,8 +312,6 @@ show_information(){
     echo -e "${Red} 路径（不要落下/）：${Font} /${camouflage}/ "
     echo -e "${Red} 底层传输安全：${Font} tls "
 
-
-
 }
 
 main(){
@@ -325,6 +328,9 @@ main(){
     v2ray_conf_add
     nginx_conf_add
     web_camouflage
+
+    #自定义证书
+    certificate
 
     #改变证书安装位置，防止端口冲突关闭相关应用
     systemctl stop nginx
