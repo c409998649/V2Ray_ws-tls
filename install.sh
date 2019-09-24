@@ -3,15 +3,15 @@
 #====================================================
 #	System Request:Debian 7+/Ubuntu 14.04+/Centos 6+
 #	Author:	wulabing
-#	Dscription: V2ray ws+tls onekey 
+#	Dscription: V2ray ws+tls onekey
 #	Version: 3.3.1
 #	Blog: https://www.wulabing.com
 #	Official document: www.v2ray.com
 #====================================================
 
 #fonts color
-Green="\033[32m" 
-Red="\033[31m" 
+Green="\033[32m"
+Red="\033[31m"
 Yellow="\033[33m"
 GreenBG="\033[42;37m"
 RedBG="\033[41;37m"
@@ -36,7 +36,7 @@ source /etc/os-release
 VERSION=`echo ${VERSION} | awk -F "[()]" '{print $2}'`
 
 check_system(){
-    
+
     if [[ "${ID}" == "centos" && ${VERSION_ID} -ge 7 ]];then
         echo -e "${OK} ${GreenBG} 当前系统为 Centos ${VERSION_ID} ${VERSION} ${Font} "
         INS="yum"
@@ -51,7 +51,7 @@ baseurl=http://nginx.org/packages/mainline/centos/7/\$basearch/
 gpgcheck=0
 enabled=1
 EOF
-        echo -e "${OK} ${GreenBG} Nginx 源 安装完成 ${Font}" 
+        echo -e "${OK} ${GreenBG} Nginx 源 安装完成 ${Font}"
     elif [[ "${ID}" == "debian" && ${VERSION_ID} -ge 8 ]];then
         echo -e "${OK} ${GreenBG} 当前系统为 Debian ${VERSION_ID} ${VERSION} ${Font} "
         INS="apt"
@@ -83,7 +83,7 @@ is_root(){
         then echo -e "${OK} ${GreenBG} 当前用户是root用户，进入安装流程 ${Font} "
         sleep 3
     else
-        echo -e "${Error} ${RedBG} 当前用户不是root用户，请切换到root用户后重新执行脚本 ${Font}" 
+        echo -e "${Error} ${RedBG} 当前用户不是root用户，请切换到root用户后重新执行脚本 ${Font}"
         exit 1
     fi
 }
@@ -114,13 +114,13 @@ time_modify(){
     echo -e "${Info} ${GreenBG} 正在进行时间同步 ${Font}"
     ntpdate time.nist.gov
 
-    if [[ $? -eq 0 ]];then 
+    if [[ $? -eq 0 ]];then
         echo -e "${OK} ${GreenBG} 时间同步成功 ${Font}"
         echo -e "${OK} ${GreenBG} 当前系统时间 `date -R`（请注意时区间时间换算，换算后时间误差应为三分钟以内）${Font}"
         sleep 1
     else
         echo -e "${Error} ${RedBG} 时间同步失败，请检查ntpdate服务是否正常工作 ${Font}"
-    fi 
+    fi
 }
 dependency_install(){
     ${INS} install wget git lsof -y
@@ -172,7 +172,7 @@ web_camouflage(){
     ##请注意 这里和LNMP脚本的默认路径冲突，千万不要在安装了LNMP的环境下使用本脚本，否则后果自负
     rm -rf /home/wwwroot && mkdir -p /home/wwwroot && cd /home/wwwroot
     git clone https://github.com/wulabing/sCalc.git
-    judge "web 站点伪装"   
+    judge "web 站点伪装"
 }
 v2ray_install(){
     if [[ -d /root/v2ray ]];then
@@ -183,7 +183,7 @@ v2ray_install(){
     wget  --no-check-certificate https://install.direct/go.sh
 
     ## wget http://install.direct/go.sh
-    
+
     if [[ -f go.sh ]];then
         bash go.sh --force
         judge "安装 V2ray"
@@ -222,11 +222,11 @@ domain_check(){
         echo -e "${Error} ${RedBG} 域名dns解析IP 与 本机IP 不匹配 是否继续安装？（y/n）${Font}" && read install
         case $install in
         [yY][eE][sS]|[yY])
-            echo -e "${GreenBG} 继续安装 ${Font}" 
+            echo -e "${GreenBG} 继续安装 ${Font}"
             sleep 2
             ;;
         *)
-            echo -e "${RedBG} 安装终止 ${Font}" 
+            echo -e "${RedBG} 安装终止 ${Font}"
             exit 2
             ;;
         esac
@@ -249,7 +249,7 @@ port_exist_check(){
 }
 v2ray_conf_add(){
     cd /etc/v2ray
-    wget https://github.com/c409998649/V2Ray_ws-tls_bash_onekey/tree/master/tls/config.json -O config.json
+    wget https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/master/tls/config.json -O config.json
 modify_port_UUID
 judge "V2ray 配置修改"
 }
@@ -259,7 +259,7 @@ nginx_conf_add(){
     server {
         listen 443 ssl;
         ssl on;
-        ssl_certificate       /home/cert/v2ray.pem;
+        ssl_certificate       /home/cert/v2ray.crt;
         ssl_certificate_key   /home/cert/v2ray.key;
         ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
         ssl_ciphers           HIGH:!aNULL:!MD5;
@@ -267,7 +267,7 @@ nginx_conf_add(){
         index index.html index.htm;
         root  /home/wwwroot/sCalc;
         error_page 400 = /400.html;
-        location /ray/ 
+        location /ray/
         {
         proxy_redirect off;
         proxy_pass http://127.0.0.1:10000;
@@ -291,7 +291,7 @@ judge "Nginx 配置修改"
 
 start_process_systemd(){
     ### nginx服务在安装完成后会自动启动。需要通过restart或reload重新加载配置
-    systemctl start nginx 
+    systemctl start nginx
     judge "Nginx 启动"
 
     systemctl enable nginx
@@ -300,6 +300,7 @@ start_process_systemd(){
     systemctl start v2ray
     judge "V2ray 启动"
 }
+
 show_information(){
     clear
 
@@ -315,7 +316,7 @@ show_information(){
     echo -e "${Red} 路径（不要落下/）：${Font} /${camouflage}/ "
     echo -e "${Red} 底层传输安全：${Font} tls "
 
-    
+
 
 }
 
@@ -337,7 +338,7 @@ main(){
     #改变证书安装位置，防止端口冲突关闭相关应用
     systemctl stop nginx
     systemctl stop v2ray
-    
+
     show_information
     start_process_systemd
 }
