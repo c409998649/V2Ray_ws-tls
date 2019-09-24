@@ -342,3 +342,4 @@ main(){
     start_process_systemd
 }
 
+main
