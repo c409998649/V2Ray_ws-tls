@@ -249,7 +249,7 @@ port_exist_check(){
 }
 v2ray_conf_add(){
     cd /etc/v2ray
-    wget https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/master/tls/config.json -O config.json
+    wget https://github.com/c409998649/V2Ray_ws-tls_bash_onekey/tree/master/tls/config.json -O config.json
 modify_port_UUID
 judge "V2ray 配置修改"
 }
